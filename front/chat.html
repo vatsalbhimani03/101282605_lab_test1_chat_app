@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chat</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+    
+    <body>
+    <div class="container">
+        <div class="jumbotron">
+    
+            <h1 class="display-4">Chatroom</h1>
+            <br>
+            <label>Select room to join:</label>
+            <select id="room" name="room"> 
+                <option value="news">news</option>
+                <option value ="covid19">covid19</option>
+                <option value ="nodeJS">nodeJS</option>
+            </select>   
+            
+            <button type = "button" name = "button" onclick = "joinRoom()" class="btn btn-primary">
+                Join Room!
+            </button>
+            
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    
+            <button type = "button" name = "button" onclick = "leaveRoom()" class="btn btn-dark">
+                Leave Room
+            </button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type = "button" name = "button" onclick = "signout()" class="btn btn-danger">
+                Sign out
+            </button>
+    
+            <h2 id="roomName"></h2>
+    
+            <input id = "message" class="form-control" placeholder="Your Message Here"></input>
+            <br>
+            <button id="send" class="btn btn-success" onclick = "sendMessage()">Send</button>
+        </div>
+
+        <div id="messages">
+    
+        </div>
+
+        <script src="/socket.io/socket.io.js"></script>
+
+        <script>
+            const client = io()
+            const currentUser = localStorage.getItem('username')
+            const tag = document.getElementById('room')
+            const roomName = tag.options[tag.selectedIndex].value
+            function joinRoom(){
+                
+                document.getElementById('roomName').innerHTML = roomName
+            }
+            function leaveRoom(){
+                document.getElementById('roomName').innerHTML = ""
+            }
+            function signout(){
+                localStorage.clear()
+                window.location.href = "http://localhost:3000/signin"
+            }
+            client.on('roomMessage',(message)=>{
+                document.getElementById('messages').innerHTML += `<li>${message.user} : ${message.message}</li>`
+            })
+            function sendMessage(){
+                const msg ={user: currentUser,
+                            message: document.getElementById('message').value,
+                            roomName}
+                client.emit('messages',msg)
+                document.getElementById('messages').innerHTML += `<li>${msg.user} : ${msg.message}</li>`
+            }
+     
+        </script>
+    
+
+
+   </body>
+
+   
+</html>

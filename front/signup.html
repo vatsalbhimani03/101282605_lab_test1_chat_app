@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign up</title>
+
+    <style>
+        .btn-color{
+            background-color: #0e1c36;
+            color: #fff;
+        
+        }
+        .profile-image-pic{
+            height: 200px;
+            width: 200px;
+            object-fit: cover;
+        }
+        .cardbody-color{
+            background-color: #ebf2fa;
+        }
+        a{
+            text-decoration: none;
+        }
+    </style>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        function onSubmit(s){
+                s.preventDefault();
+                const username = document.getElementById('un').value;
+                const firstname = document.getElementById('fn').value;
+                const lastname = document.getElementById('ln').value;
+                const password = document.getElementById('pw').value;
+                fetch(
+                    "http://localhost:3000/signup", {
+                    method: "POST",
+                    cache: 'no-cache',
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        username,
+                        firstname,
+                        lastname,
+                        password
+                    })
+                })
+                .then(res => res.json())
+                .then(res => {
+                    console.log(res)
+                    localStorage.setItem("username", JSON.stringify(res.newUser.username))
+                    window.location.href = "http://localhost:3000/index"
+                })
+                .catch(err => alert(err))
+            }
+    </script>
+
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+          <div class="col-md-6 offset-md-3">
+            <h2 class="text-center text-dark mt-5">Sign up to Join Room</h2>
+            <div class="card my-5">
+    
+              <form class="card-body cardbody-color p-lg-5" onsubmit="onSubmit(s)" method="POST">
+    
+                <div class="text-center">
+                  <img src="https://thumbs.dreamstime.com/z/chat-room-isolated-round-blue-push-button-chat-room-round-blue-push-button-129703066.jpg" class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3"
+                    width="200px" alt="profile">
+                </div>
+    
+                <div class="mb-3">
+                  <input type="text" class="form-control" id="un" aria-describedby="emailHelp"
+                    placeholder="Enter User Name">
+                </div>
+
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="fn" aria-describedby="emailHelp"
+                      placeholder="Enter First Name">
+                </div>
+                
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="ln" aria-describedby="emailHelp"
+                        placeholder="Enter Last Name">
+                </div>    
+                
+                <div class="mb-3">
+                  <input type="password" class="form-control" id="pw" placeholder="Enter password">
+                </div>
+
+                <div class="text-center"><button type="submit" class="btn btn-color px-5 mb-5 w-100">Sign up</button></div>
+
+                <div id="emailHelp" class="form-text text-center mb-5 text-dark">Already have an account?
+                  <a href="http://localhost:3000/signin" class="text-dark fw-bold"> log in </a>
+                </div>
+              </form>
+            </div>
+    
+          </div>
+        </div>
+      </div>
+</body>
+</html>
